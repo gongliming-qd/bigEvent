@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="css/iconfont.css">
     <link rel="stylesheet" href="css/main.css">
     <script src="js/jquery-1.12.4.min.js"></script>
+    <script src="./js/bootstrap/js/bootstrap.min.js"></script>
 
 </head>
 
@@ -20,51 +21,118 @@
             用户信息修改
         </div>
         <div class="container-fluid common_con">
-            <form class="form-horizontal article_form">
+            <form class="form-horizontal article_form" id="info_form" action="#">
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">用户名称：</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="inputEmail3" value="李思思">
+                        <input type="text" class="form-control" id="inputname" value="李思思" name="username">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">昵称：</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="inputEmail3" value="思思">
+                        <input type="text" class="form-control" id="inputohtername" value="思思" name="nickname">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">邮箱：</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="inputEmail3" value="lisisi@126.com">
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="inputPassword3" class="col-sm-2 control-label">用户图标：</label>
-                    <div class="col-sm-10">
-                        <img src="images/2.jpg" alt="" class="user_pic">
-                        <input type="file" id="exampleInputFile">
+                        <input type="text" class="form-control" id="inputEmail" value="lisisi@126.com" name="email">
                     </div>
                 </div>
 
                 <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-2 control-label">密码：</label>
-                        <div class="col-sm-4">
-                            <input type="password" class="form-control" id="inputEmail3" value="12345678">
-                        </div>
+                    <label for="inputPassword3" class="col-sm-2 control-label">用户图标：</label>
+                    <div class="col-sm-10">
+                        <img src="images/2.jpg" alt="" class="user_pic" id="exampleInputFileImg">
+                        <input type="file" id="exampleInputFile" name="user_pic">
                     </div>
-               
-    
+                </div>
+
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">密码：</label>
+                    <div class="col-sm-4">
+                        <input type="password" class="form-control" id="inputpsw" value="12345678" name="password">
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-success">修改</button>
+                        <button type="submit" id="sub_btn" class="btn btn-success">修改</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
 
+
+    <!-- 模态框 -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">温馨提示</h4>
+                </div>
+                <div class="modal-body">
+                    确定保存当前信息吗?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn  btn-primary" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary"  id="sub_true">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 模态框 -->
 </body>
+
+<script>
+    $(function () {
+        // 1. 导入当前用户默认信息
+        $.ajax({
+            type: 'get',
+            url: 'http://localhost:8000/admin/userinfo_get',
+            success: function (data) {
+                if (data.code === 200) {
+                    // 1.1 设置各种信息
+                    $('#inputname').val(data.data.username);
+                    $('#inputohtername').val(data.data.nickname);
+                    $('#inputEmail').val(data.data.email);
+                    $('#exampleInputFileImg').attr('src', data.data.user_pic);
+                    $('#inputpsw').val(data.data.password);
+                }
+
+            }
+        })
+
+        // 2. 保存用户信息
+        $('#sub_btn').on('click', function (e) {
+            // 2.1 阻止默认事件 
+            e.preventDefault();
+            // 2.1 跳出提示框,确认是否真的修改
+            $('#myModal').modal();
+            // 2.3 模态框点击确认时 
+            $('#sub_true').on('click',function(e){
+                e.preventDefault();
+                // 2.3.1 隐藏当前模态框
+                $('#myModal').modal('hide');
+                // 2.3.2 获取当前的FormData信息
+                var formdata1 = new FormData($('#info_form')[0]);
+                // 2.3.3 ajax提交当前修改信息
+                $.ajax({
+                    type : 'post',
+                    url : 'http://localhost:8000/admin/userinfo_edit',
+                    processData : false,
+                    contentType : false,
+                    data :  formdata1,
+                    success : function(data){
+                    }
+                })
+            })
+        })
+    })
+</script>
 
 </html>
