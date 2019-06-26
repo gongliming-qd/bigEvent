@@ -21,7 +21,7 @@
             用户信息修改
         </div>
         <div class="container-fluid common_con">
-            <form class="form-horizontal article_form" id="info_form" action="#">
+            <form class="form-horizontal article_form" id="info_form" action="" onsubmit="return test()">
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">用户名称：</label>
                     <div class="col-sm-4">
@@ -58,7 +58,7 @@
 
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" id="sub_btn" class="btn btn-success">修改</button>
+                        <button  id="sub_btn" class="btn btn-success">修改</button>
                     </div>
                 </div>
             </form>
@@ -90,6 +90,12 @@
 
 <script>
     $(function () {
+        window.test=function(){
+            console.log(1111);
+            return false;
+        }
+
+
         // 1. 导入当前用户默认信息
         $.ajax({
             type: 'get',
